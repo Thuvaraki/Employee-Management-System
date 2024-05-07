@@ -1,5 +1,6 @@
 package com.employeeManagement.EmployeeManagement.service;
 
+import com.employeeManagement.EmployeeManagement.exception.ResourceNotFoundException;
 import com.employeeManagement.EmployeeManagement.model.Employee;
 import com.employeeManagement.EmployeeManagement.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,5 +19,9 @@ public class EmployeeService {
 
     public Employee addEmployees(Employee employee) {
         return employeeRepository.save(employee);
+    }
+
+    public Employee getEmployeeById(Long id) {
+        return employeeRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Employee not exist with id : "+id));
     }
 }
