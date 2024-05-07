@@ -23,13 +23,8 @@ const ListEmployeeComponent = () => {
 
   return (
     <div>
-      <h2 className="text-center">Employee List</h2>
+      <h2 className="text-center m-4">Employee List</h2>
       <div className="row">
-        <Link to="/addEmployee">
-          <button className="btn btn-primary" onClick={handleAddEmployee}>
-            Add Employee
-          </button>
-        </Link>
         <table className="table table-striped table-bordered">
           <thead>
             <tr>
@@ -49,6 +44,12 @@ const ListEmployeeComponent = () => {
             ))}
           </tbody>
         </table>
+
+        <Link to="/addEmployee">
+          <button className="btn btn-primary m-4" onClick={handleAddEmployee}>
+            Add Employee
+          </button>
+        </Link>
       </div>
     </div>
   );
