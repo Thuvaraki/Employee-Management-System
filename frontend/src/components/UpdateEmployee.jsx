@@ -1,30 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import EmployeeService from "../services/EmployeeService";
-import { useNavigate } from "react-router-dom";
 
-const AddEmployee = () => {
-  const [newEmployeeFirstName, setNewEmployeeFirstName] = useState("");
-  const [newEmployeeLastName, setNewEmployeeLastName] = useState("");
-  const [newEmail, setNewEmail] = useState("");
+const UpdateEmployee = () => {
+  const { id } = useParams();
+  //   console.log(id);
+  const [existingEmployee, setExistingEmployee] = useState({});
+  const [editFirstName, setEditFirstName] = useState("");
+  const [editLastName, setEditLastName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const newEmployee = {
-      firstName: newEmployeeFirstName,
-      lastName: newEmployeeLastName,
-      emailId: newEmail,
+  useEffect(() => {
+    const fetchEmployee = async () => {
+      try {
+        const response = await EmployeeService.getEmployeeById(id);
+        // console.log(existingEmployee);
+        setExistingEmployee(response.data);
+        setEditFirstName(response.data.firstName || "");
+        setEditLastName(response.data.lastName || "");
+        setEditEmail(response.data.emailId || "");
+      } catch (error) {
+        console.error("Error fetching employee:", error);
+      }
     };
+    fetchEmployee();
+  }, [id]);
 
-    console.log(newEmployee);
-
+  const handleUpdate = async () => {
     try {
-      await EmployeeService.addEmployee(newEmployee);
+      const updatedEmployee = {
+        firstName: editFirstName,
+        lastName: editLastName,
+        emailId: editEmail,
+      };
+      //   console.log(updatedEmployee);
+      await EmployeeService.updateEmployee(id, updatedEmployee);
       navigate("/");
     } catch (error) {
-      console.error("Error adding employee:", error.message);
-      alert("Failed to add employee. Please try again.");
+      console.error("Error updating employee:", error);
     }
   };
 
@@ -35,7 +49,7 @@ const AddEmployee = () => {
   return (
     <div className="container mt-4">
       <div className="row">
-        <div className="card col-md-6 offset-md-3">
+        <div className="card col-md-8 ">
           <h2 className="text-center mt-4">Add New Employee</h2>
           <div className="card-body">
             <form>
@@ -46,8 +60,8 @@ const AddEmployee = () => {
                 <input
                   name="firstname"
                   placeholder="Enter First name"
-                  value={newEmployeeFirstName}
-                  onChange={(e) => setNewEmployeeFirstName(e.target.value)}
+                  value={editFirstName}
+                  onChange={(e) => setEditFirstName(e.target.value)}
                   className="form-control mb-3"
                 />
               </div>
@@ -59,8 +73,8 @@ const AddEmployee = () => {
                 <input
                   name="lastname"
                   placeholder="Enter Last name"
-                  value={newEmployeeLastName}
-                  onChange={(e) => setNewEmployeeLastName(e.target.value)}
+                  value={editLastName}
+                  onChange={(e) => setEditLastName(e.target.value)}
                   className="form-control mb-3"
                 />
               </div>
@@ -72,8 +86,8 @@ const AddEmployee = () => {
                 <input
                   name="email"
                   placeholder="Enter Email"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
                   className="form-control"
                 />
               </div>
@@ -82,9 +96,9 @@ const AddEmployee = () => {
                 <button
                   className="btn btn-success m-4"
                   type="button"
-                  onClick={handleSubmit}
+                  onClick={handleUpdate}
                 >
-                  Save
+                  Update
                 </button>
 
                 <button
@@ -103,4 +117,4 @@ const AddEmployee = () => {
   );
 };
 
-export default AddEmployee;
+export default UpdateEmployee;
